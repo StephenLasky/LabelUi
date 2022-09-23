@@ -8,26 +8,29 @@
 </head>
 <body>
 
-<div class="main-container">
-    <div class="view-container">
-        View Container
-        <video height="100%" id="videoPlayer">
-            <source src="testVideo/unamed_cam_1/DSCF0013.AVI" type="video/avi">
-            Your browser does not support the video tag.
-        </video>
-    </div>
-    <div class="control-container">
-        Control Container
-        <button onclick="playVideo()">Play</button>
-        <button onclick="pauseVideo()">Pause</button>
-        <button onclick="restartVideo()">Restart</button>
-        <button onclick="changeVideoPlaybackSpeed(1.0)">1x</button>
-        <button onclick="changeVideoPlaybackSpeed(4.0)">4x</button>
-    </div>
-</div>
-
-
-
+<table class="main-container">
+    <tr class="view-container">
+        <td style="background-color: green">
+            <canvas id="videoCanvas"></canvas>
+        </td>
+        <td class="videoPlayer-container">        View Container
+            <video id="videoPlayer">
+                <source src="testVideo/unamed_cam_1/DSCF0013.AVI" type="video/avi">
+                Your browser does not support the video tag.
+            </video>
+        </td>
+    </tr>
+    <tr>
+        <td class="control-container">
+            Control Container
+            <button onclick="playVideo()">Play</button>
+            <button onclick="pauseVideo()">Pause</button>
+            <button onclick="restartVideo()">Restart</button>
+            <button onclick="changeVideoPlaybackSpeed(1.0)">1x</button>
+            <button onclick="changeVideoPlaybackSpeed(4.0)">4x</button>
+        </td>
+    </tr>
+</table>
 
 </body>
 </html>
