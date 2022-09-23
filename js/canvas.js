@@ -11,6 +11,7 @@ canvas.width = width;
 context.strokeStyle = 'red';
 
 let drawing = false;
+let objectStack = [];
 var startX = -1.0;
 var startY = -1.0;
 
@@ -38,6 +39,9 @@ window.addEventListener("mousedown", startDrawing);
 
 function endDrawing(e) {
     drawing = false;
+
+    let { x, y } = getMousePos(canvas, e);
+    objectStack.push(new Object(startX, startY, x-startX, y-startY));
 }
 
 window.addEventListener("mouseup", endDrawing);
@@ -62,6 +66,33 @@ function draw(e) {
     let { x, y } = getMousePos(canvas, e);
     context.clearRect(0, 0, canvas.width, canvas.height);
     drawFrame(startX, startY, x, y);
+
+    for (let i =0; i < objectStack.length; i++) {
+        let [x, y, w, h] = objectStack[i].getPos();
+        drawFrame(x, y, x+w, y+h);
+    }
 }
 
 window.addEventListener("mousemove", draw);
+
+class Object {
+    constructor(x, y, w, h) {
+        this.x = x; // starting x point
+        this.y = y; // starting y point
+        this.w = w; // width of rectangle
+        this.h = h; // height of rectangle
+        this.class = "noClassSelected";
+    }
+
+    getPos() {
+        return [this.x, this.y, this.w, this.h];
+    }
+
+    logInfo() {
+        console.log("Object: x:"+ this.x + "y:" + this.y);
+    }
+
+    healthCheck() {
+        console.log("Object healthy.");
+    }
+}
