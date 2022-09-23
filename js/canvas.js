@@ -9,7 +9,6 @@ canvas.height = height;
 canvas.width = width;
 
 context.strokeStyle = 'red';
-context.fillStyle = 'red';
 
 let drawing = false;
 var startX = -1.0;
@@ -43,14 +42,26 @@ function endDrawing(e) {
 
 window.addEventListener("mouseup", endDrawing);
 
+function drawLine(x1, y1, x2, y2) {
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
+}
+
+function drawFrame(x1, y1, x2, y2) {
+    drawLine(x1, y1, x2, y1); // top
+    drawLine(x2, y1, x2, y2); // right
+    drawLine(x1, y2, x2, y2); // bottom
+    drawLine(x1 , y1, x1, y2); // left
+}
+
 function draw(e) {
     if (!drawing) return;
 
     let { x, y } = getMousePos(canvas, e);
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillRect(startX, startY, x-startX, y-startY);
-
-    context.stroke();
+    drawFrame(startX, startY, x, y);
 }
 
 window.addEventListener("mousemove", draw);
