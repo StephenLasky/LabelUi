@@ -8,33 +8,12 @@ const width = 1920;
 canvas.height = height;
 canvas.width = width;
 
-context.fillRect(100, 150, 200, 300);
-
-// create a stroke
-context.beginPath();
-context.moveTo( 50, 100);
-context.lineTo(100, 150);
-context.stroke();
-// this ends the current path
-context.beginPath();
-
 context.strokeStyle = 'red';
 context.fillStyle = 'red';
 
 let drawing = false;
-
-function startDrawing(e) {
-    drawing = true;
-    context.beginPath();
-}
-
-window.addEventListener("mousedown", startDrawing);
-
-function endDrawing(e) {
-    drawing = false;
-}
-
-window.addEventListener("mouseup", endDrawing);
+var startX = -1.0;
+var startY = -1.0;
 
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect(),
@@ -47,12 +26,30 @@ function getMousePos(canvas, evt) {
     }
 }
 
+function startDrawing(e) {
+    drawing = true;
+    context.beginPath();
+
+    let { x, y } = getMousePos(canvas, e);
+    startX = x;
+    startY = y;
+}
+
+window.addEventListener("mousedown", startDrawing);
+
+function endDrawing(e) {
+    drawing = false;
+}
+
+window.addEventListener("mouseup", endDrawing);
+
 function draw(e) {
     if (!drawing) return;
 
     let { x, y } = getMousePos(canvas, e);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillRect(startX, startY, x-startX, y-startY);
 
-    context.lineTo(x, y);
     context.stroke();
 }
 
