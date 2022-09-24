@@ -4,7 +4,6 @@ const context = canvas.getContext("2d");
 const height = 1080;
 const width = 1920;
 
-// resize canvas (CSS does scale it up or down)
 canvas.height = height;
 canvas.width = width;
 
@@ -15,14 +14,22 @@ let objectStack = [];
 var startX = -1.0;
 var startY = -1.0;
 
-function getMousePos(canvas, evt) {
+function getMousePos(canvas, evt, normalized=false) {
     var rect = canvas.getBoundingClientRect(),
       scaleX = canvas.width / rect.width,
       scaleY = canvas.height / rect.height;
 
-    return {
-      x: (evt.clientX - rect.left) * scaleX,
-      y: (evt.clientY - rect.top) * scaleY
+    if (!normalized) {
+        return {
+            x: (evt.clientX - rect.left) * scaleX,
+            y: (evt.clientY - rect.top) * scaleY
+        }
+    }
+    else {
+        return {
+            x: (evt.clientX - rect.left),
+            y: (evt.clientY - rect.top)
+        }
     }
 }
 

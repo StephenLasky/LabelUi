@@ -12,7 +12,7 @@ body {
 }
 
 #canvas {
-    width: 70%;
     aspect-ratio: 16/9;
-    border: 2px solid black;
+    width: 100%;
+    background-color: white;
 }
