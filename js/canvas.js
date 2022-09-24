@@ -7,12 +7,15 @@ const width = 1920;
 canvas.height = height;
 canvas.width = width;
 
-context.strokeStyle = 'red';
+context.strokeStyle = 'yellow';
+context.lineWidth = 3;
 
 let drawing = false;
 let objectStack = [];
 var startX = -1.0;
 var startY = -1.0;
+
+let canvasBackgroundImage = undefined;
 
 function getMousePos(canvas, evt, normalized=false) {
     var rect = canvas.getBoundingClientRect(),
@@ -67,17 +70,19 @@ function drawFrame(x1, y1, x2, y2) {
     drawLine(x1 , y1, x1, y2); // left
 }
 
-function draw(e) {
-    if (!drawing) return;
-
-    let { x, y } = getMousePos(canvas, e);
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    drawFrame(startX, startY, x, y);
-
+function refreshCanvas() {
+    context.drawImage(canvasBackgroundImage, 0, 0);
     for (let i =0; i < objectStack.length; i++) {
         let [x, y, w, h] = objectStack[i].getPos();
         drawFrame(x, y, x+w, y+h);
     }
+}
+
+function draw(e) {
+    if (!drawing) return;
+    let { x, y } = getMousePos(canvas, e);
+    refreshCanvas();
+    drawFrame(startX, startY, x, y);
 }
 
 window.addEventListener("mousemove", draw);
@@ -89,6 +94,7 @@ class Object {
         this.w = w; // width of rectangle
         this.h = h; // height of rectangle
         this.class = "noClassSelected";
+        this.createdTimestamp = Date.now();
     }
 
     getPos() {
@@ -103,3 +109,37 @@ class Object {
         console.log("Object healthy.");
     }
 }
+
+function getVideoImage(path, secs, callback) {
+    var me = this, video = document.createElement('video');
+    video.onloadedmetadata = function() {
+        if ('function' === typeof secs) {
+            secs = secs(this.duration);
+        }
+        this.currentTime = Math.min(Math.max(0, (secs < 0 ? this.duration : 0) + secs), this.duration);
+    };
+    video.onseeked = function(e) {
+        var canvas = document.createElement('canvas');
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        var img = new Image();
+        img.src = canvas.toDataURL();
+        console.log("Video callback success");
+        callback.call(me, img, this.currentTime, e);
+
+    };
+    video.onerror = function(e) {
+        console.log("Video callback error");
+        callback.call(me, undefined, undefined, e);
+    };
+    video.src = path;
+}
+
+function getVideoImageCallback(img, t, e) {
+    canvasBackgroundImage = img;
+}
+
+let sampleVideoPath = "../testVideo/unamed_cam_1/DSCF0013.AVI";
+getVideoImage(sampleVideoPath, 0.1, getVideoImageCallback);
